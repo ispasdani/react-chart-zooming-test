@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ResponsiveBar } from "@nivo/bar";
 
 const ZoomableBarChart = () => {
     const [zoomLevel, setZoomLevel] = useState(1);
     const [showLabels, setShowLabels] = useState(false);
-    const chartContainerRef = useRef(null);
+    const chartContainerRef = useRef<HTMLDivElement>(null);
 
     // Sample dataset with MORE data
     const data = [
@@ -104,7 +104,7 @@ const ZoomableBarChart = () => {
                        motionConfig={{ damping: 15 }}
                         
                         /* TOOLTIP: Shows label + value when hovering */
-                        tooltip={({ id, value, label }) => (
+                        tooltip={({  value, label }) => (
                             <div
                                 style={{
                                     background: "white",
