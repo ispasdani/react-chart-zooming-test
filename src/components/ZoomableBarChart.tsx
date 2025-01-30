@@ -4,7 +4,9 @@ import { ResponsiveBar } from "@nivo/bar";
 const ZoomableBarChart = () => {
     const [zoomLevel, setZoomLevel] = useState(1);
     const [showLabels, setShowLabels] = useState(false);
+    const [enableScrollZoom, setEnableScrollZoom] = useState(false);
     const chartContainerRef = useRef<HTMLDivElement>(null);
+    
 
     // Sample dataset with MORE data
     const data = [
@@ -57,12 +59,34 @@ const ZoomableBarChart = () => {
         }
     }, [chartWidth]);
 
+    // Handle mouse scroll for zooming
+    const handleWheelZoom = (event: { preventDefault: () => void; deltaY: number; }) => {
+        if (enableScrollZoom) {
+            event.preventDefault();
+            if (event.deltaY < 0) {
+                setZoomLevel((prev) => Math.min(prev * 1.2, 15)); // Zoom in
+            } else {
+                setZoomLevel((prev) => Math.max(prev / 1.2, 0.5)); // Zoom out
+            }
+        }
+    };
+
     return (
-        <div style={{ width: "100%", textAlign: "center" }}>
+        <div style={{ width: "100%", textAlign: "center", overflow: "hidden" }}>
             {/* Zoom Buttons */}
             <div style={{ marginBottom: "10px" }}>
                 <button onClick={handleZoomIn}>Zoom In</button>
                 <button onClick={handleZoomOut} style={{ marginLeft: "10px" }}>Zoom Out</button>
+                <button
+                    onClick={() => setEnableScrollZoom((prev) => !prev)}
+                    style={{
+                        marginLeft: "10px",
+                        backgroundColor: enableScrollZoom ? "#4CAF50" : "#ccc",
+                        color: enableScrollZoom ? "white" : "black",
+                    }}
+                >
+                    {enableScrollZoom ? "Disable Scroll Zoom" : "Enable Scroll Zoom"}
+                </button>
             </div>
 
             {/* Scrollable container that expands beyond screen width */}
@@ -75,6 +99,7 @@ const ZoomableBarChart = () => {
                     padding: "10px",
                     whiteSpace: "nowrap",
                 }}
+                onWheel={handleWheelZoom}
             >
                 <div style={{ width: chartWidth, height: "400px" }}>
                     <ResponsiveBar
